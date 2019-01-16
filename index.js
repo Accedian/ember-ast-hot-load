@@ -3,6 +3,7 @@ const path = require("path");
 const fs = require("fs");
 const map = require('broccoli-stew').map;
 const rm = require('broccoli-stew').rm;
+const findWorkspaceRoot = require('find-yarn-workspace-root');
 
 const ADDON_NAME = "ember-ast-hot-load";
 
@@ -19,10 +20,10 @@ module.exports = {
       return;
     } else {
       require("./lib/hot-load-middleware")(
-        config, 
+        config,
         this._OPTIONS
       ).run();
-      
+
       require("./lib/hot-reloader")(
         config.options,
         this._OPTIONS.watch
@@ -91,12 +92,17 @@ module.exports = {
       resolvedPath = path.relative(root, require.resolve(npmCompilerPath));
     } catch(e) {
       try {
-        resolvedPath = path.relative(root, require.resolve(path.join(root, 'node_modules', npmCompilerPath)));
+        const workspaceRoot = findWorkspaceRoot(path.relative(root))
+        resolvedPath = path.relative(root, require.resolve(path.join(workspaceRoot, 'node_modules', npmCompilerPath)));
       } catch (ee) {
         try {
-          resolvedPath = path.relative(root, require.resolve(path.join(root, '../node_modules', npmCompilerPath)));
+          resolvedPath = path.relative(root, require.resolve(path.join(root, 'node_modules', npmCompilerPath)));
         } catch (eee) {
-          resolvedPath = path.relative(root, require.resolve(path.join(root, '../../node_modules', npmCompilerPath)));
+          try {
+            resolvedPath = path.relative(root, require.resolve(path.join(root, '../node_modules', npmCompilerPath)));
+          } catch (eeee) {
+            resolvedPath = path.relative(root, require.resolve(path.join(root, '../../node_modules', npmCompilerPath)));
+          }
         }
       }
     }
@@ -190,8 +196,8 @@ module.exports = {
     }
     if (name === 'app' || name === 'addon') {
       return rm(
-        this._super.treeFor.apply(this, arguments), 
-        'ember-ast-hot-load/**', 
+        this._super.treeFor.apply(this, arguments),
+        'ember-ast-hot-load/**',
         'components/hot-content.js',
         'components/hot-placeholder.js',
         'helpers/hot-load.js',
