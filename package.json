@@ -1,9 +1,16 @@
 {
   "name": "ember-ast-hot-load",
-  "version": "0.0.75",
+  "version": "0.0.79",
   "description": "Ember components hot-reload addon",
   "keywords": [
-    "ember-addon"
+    "ember-addon",
+    "ast",
+    "dev-tools",
+    "hot-loading",
+    "hot-reloading",
+    "development",
+    "reloading",
+    "live-reload"
   ],
   "repository": "https://github.com/lifeart/ember-ast-hot-load",
   "license": "MIT",
@@ -18,7 +25,7 @@
     "lint:js": "eslint .",
     "start": "ember serve",
     "test": "ember test",
-    "test:jest": "jest",
+    "test:jest": "jest --no-watchman",
     "test:all": "ember try:each"
   },
   "dependencies": {
@@ -30,7 +37,7 @@
   },
   "devDependencies": {
     "@ember/optional-features": "^0.7.0",
-    "@glimmer/syntax": "0.38.0",
+    "@glimmer/syntax": "0.39.2",
     "broccoli-asset-rev": "^3.0.0",
     "ember-cli": "~3.7.0",
     "ember-cli-dependency-checker": "^3.0.0",
