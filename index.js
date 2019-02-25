@@ -105,11 +105,11 @@ module.exports = {
     let resolvedPath = null;
     let root = this.project.root;
     try {
-      resolvedPath = path.relative(root, require.resolve(npmCompilerPath));
+      const workspaceRoot = findWorkspaceRoot(path.relative(root))
+      resolvedPath = path.relative(root, require.resolve(path.join(workspaceRoot, 'node_modules', npmCompilerPath)));
     } catch (e) {
       try {
-        const workspaceRoot = findWorkspaceRoot(path.relative(root))
-        resolvedPath = path.relative(root, require.resolve(path.join(workspaceRoot, 'node_modules', npmCompilerPath)));
+        resolvedPath = path.relative(root, require.resolve(npmCompilerPath));
       } catch (ee) {
         try {
           resolvedPath = path.relative(root, require.resolve(path.join(root, 'node_modules', npmCompilerPath)));
