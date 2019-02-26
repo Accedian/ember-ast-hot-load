@@ -1,9 +1,6 @@
 "use strict";
-const path = require("path");
-const fs = require("fs");
 const map = require('broccoli-stew').map;
 const rm = require('broccoli-stew').rm;
-const findWorkspaceRoot = require('find-yarn-workspace-root');
 
 const ADDON_NAME = "ember-ast-hot-load";
 
@@ -93,37 +90,7 @@ module.exports = {
       }
     };
   },
-  _getTemplateCompilerPath() {
-    if (this._OPTIONS && this._OPTIONS["templateCompilerPath"]) {
-      return this._OPTIONS["templateCompilerPath"];
-    }
-    const npmCompilerPath = path.join(
-      "ember-source",
-      "dist",
-      "ember-template-compiler.js"
-    );
-    let resolvedPath = null;
-    let root = this.project.root;
-    try {
-      const workspaceRoot = findWorkspaceRoot(path.relative(root))
-      resolvedPath = path.relative(root, require.resolve(path.join(workspaceRoot, 'node_modules', npmCompilerPath)));
-    } catch (e) {
-      try {
-        resolvedPath = path.relative(root, require.resolve(npmCompilerPath));
-      } catch (ee) {
-        try {
-          resolvedPath = path.relative(root, require.resolve(path.join(root, 'node_modules', npmCompilerPath)));
-        } catch (eee) {
-          try {
-            resolvedPath = path.relative(root, require.resolve(path.join(root, '../node_modules', npmCompilerPath)));
-          } catch (eeee) {
-            resolvedPath = path.relative(root, require.resolve(path.join(root, '../../node_modules', npmCompilerPath)));
-          }
-        }
-      }
-    }
-    return resolvedPath;
-  },
+
   _assignOptions(app) {
     let appOptions = app.options || {};
     let addonOptions = appOptions[ADDON_NAME] || {};
@@ -186,18 +153,11 @@ module.exports = {
     if (this.isDisabled()) {
       return;
     }
-    // this._setupPreprocessorRegistry('app', app.registry);
+
     // Require template compiler as in CLI this is only used in build, we need it at runtime
-    const npmPath = this._getTemplateCompilerPath();
-    if (fs.existsSync(npmPath)) {
-      app.import(npmPath, {
-        using: [{ transformation: "fastboot-safe" }]
-      });
-    } else {
-      throw new Error(
-        "Unable to locate ember-template-compiler.js. ember/ember-source not found in node_modules"
-      );
-    }
+    app.import('vendor/ember/ember-template-compiler.js', {
+      using: [{ transformation: "fastboot-safe" }]
+    })
   },
   isDisabled() {
     return this._isDisabled;
