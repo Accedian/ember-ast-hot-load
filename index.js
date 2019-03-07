@@ -155,9 +155,7 @@ module.exports = {
     }
 
     // Require template compiler as in CLI this is only used in build, we need it at runtime
-    app.import('vendor/ember/ember-template-compiler.js', {
-      using: [{ transformation: "fastboot-safe" }]
-    })
+    app.import('vendor/ember/ember-template-compiler.js')
   },
   isDisabled() {
     return this._isDisabled;
