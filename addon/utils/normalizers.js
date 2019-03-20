@@ -23,6 +23,8 @@ export function normalizePath(path) {
   return dasherizePath(path.split("\\").join("/"));
 }
 
+const upperCaseRegex = /[[:upper:]]/
+
 // we need this because Ember.String.dasherize('XTestWrapper') -> xtest-wrapper, not x-test-wrapper
 export function dasherizeName(name = '') {
 	const result = [];
@@ -33,7 +35,7 @@ export function dasherizeName(name = '') {
 	result.push(name.charAt(0));
 	for (let i = 1; i < nameSize; i++) {
 		let char = name.charAt(i);
-		if (char === char.toUpperCase()) {
+		if (upperCaseRegex.exec(char)) {
 			if (char !== '-' && char !== '/' && char !== '_') {
 				if (result[result.length - 1] !== '-' && result[result.length - 1] !== '/') {
 					result.push('-');
